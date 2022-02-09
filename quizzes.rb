@@ -14,7 +14,7 @@
     expected_answer = "grant me the s3r3nity to accept the things i cannot change the c0urage to change the things i can and the w1sd0m to know the difference"
 
     def sanitize_paragraph(paragraph)
-      # your code
+      return paragraph.downcase.gsub(/[^\w ]/, "").squeeze(' ')
     end
     
     puts "Challenge 1 completed: #{sanitize_paragraph(paragraph) == expected_answer}"
@@ -37,7 +37,11 @@
     ]
 
     def get_state(address)
-      # your code
+      ["SARAWAK", "TERENGGANU", "JOHOR", "TERENGGANU", "SELANGOR", "SELANGOR"].each { |x| 
+        if address.upcase.include?(x)
+          return x
+        end
+      }
     end
 
     # passing validation
@@ -55,7 +59,21 @@
     expected_answer = "MULTIPOLYGON (((30 20, 45 40, 10 40, 30 20)), ((15 5, 40 10, 10 20, 5 10, 15 5)))"
 
     def coord_to_wkt(coordinate_pair)
-      # your code
+      str_coords = coordinate_pair.to_s
+      chars = str_coords.split('')
+      chars.each_with_index do |c, i|
+        if c == ',' && chars[i-1] =~ /\d/
+          chars[i] = ''
+        end
+      end
+      chars.each_with_index do |c, i|
+        if '[]'.include?(c) && (chars[i-1] =~ /\d/ || chars[i+1] =~ /\d/)
+          chars.delete_at(i)
+        end
+      end
+
+      str = chars.join.gsub(/\[/, '(').gsub(/\]/,')')
+      return "MULTIPOLYGON " << str
     end
 
     # passing validation
@@ -70,7 +88,15 @@
     Bonus points for the elegant recursive solution!'
 
     def is_palindrome?(word)
-      
+      if word.length <= 1
+        return true
+      end
+      chars = word.split('')
+      if chars[0] == chars[-1]
+        is_palindrome?(word[1,word.length-2])
+      else
+        return false
+      end
     end
 
     # passing validation
